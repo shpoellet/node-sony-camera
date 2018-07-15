@@ -1,9 +1,10 @@
 # SonyCamera
 
-Originally forked from https://github.com/eqot/RemoteCamera
+Originally forked from https://github.com/timelapseplus/node-sony-camera
 
-Rebuilt as a library with event support.
+Added movie recording support
 
+Added status check methods
 
 ## Installation
 
@@ -37,7 +38,7 @@ cam.connect(); // puts the camera in remote mode and starts monitoring events
 
 Contains a list of parameters available.  Example:
   ```
-  cam.params: 
+  cam.params:
    { cameraFunction: { current: 'Remote Shooting', available: [Object] },
      postviewImageSize: { current: '2M', available: [Object] },
      shootMode: { current: 'still', available: [Object] },
@@ -69,7 +70,7 @@ cam.set('fNumber', '5.6');
 ```
 ### cam.capture([multipleCallback,] callback)
 
-Takes a picture. If set, optional multipleCallback boolean argument, causes the callback to be called twice -- once when the capture is complete (includes image name), and again when the image is downloaded.  If there is an error, the callback is not called again. 
+Takes a picture. If set, optional multipleCallback boolean argument, causes the callback to be called twice -- once when the capture is complete (includes image name), and again when the image is downloaded.  If there is an error, the callback is not called again.
 ```
 // example
 cam.capture(true, function(err, name, imageData) {
@@ -111,7 +112,7 @@ The included demo is a lightweight app to show the basic features, allowing inte
 cd node-sony-camera/demo
 npm install
 ```
-### 2. Connect computer wifi to camera 
+### 2. Connect computer wifi to camera
 On the camera, go to Menu->Appication->Smart Remote Control to enable remote wifi mode, then connect the computer to the wifi network shown on the camera screen.
 
 ### 3. Start demo app
