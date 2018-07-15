@@ -126,4 +126,4 @@ node ./server.js
 
 ## License
 
-Copyright &copy; 2013-2014 Ikuo Terado, 2017 Elijah Parker. Released under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
+Copyright &copy; 2013-2014 Ikuo Terado, 2017 Elijah Parker, 2018 Shawn Poellet. Released under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
