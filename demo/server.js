@@ -32,6 +32,14 @@ io.on('connection', function(socket){
   		if(name && !image) io.emit('status', "new photo: " + name);
   	});
   });
+	socket.on('start', function(){
+  	console.log("starting recording");
+  	cam.recordStart();
+  });
+	socket.on('stop', function(){
+  	console.log("stopping recording");
+  	cam.recordStop();
+  });
   socket.on('startViewfinder', function(){
   	console.log("starting liveview");
   	cam.startViewfinder();
@@ -42,6 +50,7 @@ io.on('connection', function(socket){
   socket.on('set', function(param, value){
   	cam.set(param, value);
   });
+
 });
 
 http.listen(3000, function(){

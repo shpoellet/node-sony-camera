@@ -24,6 +24,7 @@ var minVersionRequired = '2.1.4';
 
     this.params = {};
     this.status = "UNKNOWN";
+    this.recording = false;
 
     this.connected = false;
     this.ready = false;
@@ -72,7 +73,7 @@ var minVersionRequired = '2.1.4';
           if(error) {
             if(error.length > 0 && error[0] == 1 && method == 'getEvent') {
               setTimeout(function() {
-                self.call(method, params, callback); 
+                self.call(method, params, callback);
               });
               return;
             }
@@ -106,7 +107,7 @@ var minVersionRequired = '2.1.4';
           self.method = 'new';
           self.port = 10000;
           setTimeout(function() {
-            self.call(method, params, callback); 
+            self.call(method, params, callback);
           });
           return;
         }
@@ -167,7 +168,7 @@ var minVersionRequired = '2.1.4';
               console.log("SonyWifi: " + item.type + " = " + self.params[item.type].current + "(+" + (self.params[item.type].available ? self.params[item.type].available.length : "NULL")  + " available)");
               self.emit("update", item.type, self.params[item.type]);
             }
-          } 
+          }
         }
       }
 
@@ -411,6 +412,60 @@ var minVersionRequired = '2.1.4';
     this.call(action, [value], callback);
   };
 
+  SonyCamera.prototype.isConnected = function () {
+    return this.connected;
+  }
+
+
+  SonyCamera.prototype.recordStart = function (callback) {
+    var self = this;
+
+    if(this.status != "IDLE") {
+      console.log("SonyWifi: camera busy, capture not available.  Status:", this.status);
+      return callback && callback('camera not ready');
+    }
+
+    this.ready = false;
+
+    var processResult = function(err, output) {
+      if (err) {
+        if(err.length > 0 && err[0] == 40403) { // capture still in progress
+          self.call('awaitTakePicture', null, processCaptureResult);
+        } else {
+          callback && callback(err);
+        }
+        self.recording = true;
+        return true;
+      }
+    }
+
+    self.call('startMovieRec', null, processResult);
+  };
+
+  SonyCamera.prototype.recordStop = function (callback) {
+    var self = this;
+
+    if(this.status != "MovieRecording") {
+      console.log("SonyWifi: camera not recording.  Status:", this.status);
+      return callback && callback('camera not recording');
+    }
+
+    this.ready = false;
+
+    var processResult = function(err, output) {
+      if (err) {
+        if(err.length > 0 && err[0] == 40403) { // capture still in progress
+          self.call('awaitTakePicture', null, processCaptureResult);
+        } else {
+          callback && callback(err);
+        }
+        self.recording = false;
+        return true;
+      }
+    }
+
+    self.call('stopMovieRec', null, processResult);
+  };
 
   // Client-side export
   if (typeof window !== 'undefined' && window.SonyCamera) { window.SonyCamera = SonyCamera; }

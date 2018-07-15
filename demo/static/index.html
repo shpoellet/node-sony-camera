@@ -33,7 +33,7 @@
               select.change(function(){
                 console.log("setting " + p + " to " + $(this).val());
                 socket.emit('set', p, $(this).val());
-              });              
+              });
             })(param);
           }
           for(var i = 0; i < params[param].available.length; i++) {
@@ -70,6 +70,14 @@
           console.log("sending capture command");
           socket.emit("capture");
         });
+        $('#start').click(function(){
+          console.log("sending start command");
+          socket.emit("start");
+        });
+        $('#stop').click(function(){
+          console.log("sending stop command");
+          socket.emit("stop");
+        });
         $('#startViewfinder').click(function(){
           console.log("sending startViewfinder command");
           socket.emit("startViewfinder");
@@ -85,6 +93,8 @@
     <div id="panel1">
       <ul id="params"></ul>
       <button id="capture">Capture</button>
+      <button id="start">start</button>
+      <button id="stop">stop</button>
       <button id="startViewfinder">Liveview On</button>
       <button id="stopViewfinder">Liveview Off</button>
     </div>
