@@ -37,7 +37,7 @@ var minVersionRequired = '2.1.4';
     console.log(this.url + ':' + this.port + this.path);
   };
 
-  SonyCamera.prototype.call = function (method, params, callback) {
+  SonyCamera.prototype.call = function (method, params, callback, altPath) {
     var self = this;
     this.rpcReq.method = method;
     this.rpcReq.params = params || [];
@@ -49,7 +49,7 @@ var minVersionRequired = '2.1.4';
       method: 'POST',
       hostname: this.url,
       port: this.port,
-      path: this.path,
+      path: altPath || this.path,
       timeout: 2000,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -68,6 +68,7 @@ var minVersionRequired = '2.1.4';
         try {
           parsedData = JSON.parse(rawData);
           var result = parsedData ? parsedData.result : null;
+          var result = parsedData.results ? parsedData.results : result;
           var error = parsedData ? parsedData.error : null;
           //console.log(result);
           if(error) {
@@ -412,11 +413,9 @@ var minVersionRequired = '2.1.4';
     this.call(action, [value], callback);
   };
 
-  SonyCamera.prototype.isConnected = function () {
-    return this.connected;
-  }
 
 
+  //Start a movie recording
   SonyCamera.prototype.recordStart = function (callback) {
     var self = this;
 
@@ -442,6 +441,7 @@ var minVersionRequired = '2.1.4';
     self.call('startMovieRec', null, processResult);
   };
 
+  //Stops movie recording
   SonyCamera.prototype.recordStop = function (callback) {
     var self = this;
 
@@ -465,6 +465,98 @@ var minVersionRequired = '2.1.4';
     }
 
     self.call('stopMovieRec', null, processResult);
+  };
+
+  //Change the mode to remote shooting
+  SonyCamera.prototype.setShootingMode = function (callback) {
+    var self = this;
+
+    if(this.status != "ContentsTransfer") {
+      console.log("SonyWifi: camera not ready.  Status:", this.status);
+      return callback && callback('camera not ready');
+    }
+
+    // this.ready = false;
+
+    var processResult = function(err, output) {
+      if (err) {
+          callback && callback(err);
+
+
+        return true;
+      }
+    }
+
+    self.call('setCameraFunction', ['Remote Shooting'], processResult);
+  };
+
+  //Change the mode to contents transfer
+  SonyCamera.prototype.setTransferMode = function (callback) {
+    var self = this;
+
+    if(this.status != "IDLE") {
+      console.log("SonyWifi: camera not in Transfer Mode.  Status:", this.status);
+      return callback && callback('camera not ready');
+    }
+
+    // this.ready = false;
+
+    var processResult = function(err, output) {
+      if (err) {
+          callback && callback(err);
+
+
+        return true;
+      }
+    }
+
+    self.call('setCameraFunction', ['Contents Transfer'], processResult);
+  };
+
+  //get the url of the newest file
+  SonyCamera.prototype.getURL = function (callback) {
+    var self = this;
+
+    // if(this.status != "ContentsTransfer") {
+    //   console.log("SonyWifi: camera not ready.  Status:", this.status);
+    //   return callback && callback('camera not ready');
+    // }
+
+    // this.ready = false;
+
+    var processResult = function(err, output) {
+      if (err) {
+          callback && callback(err);
+
+        return true;
+      }
+      console.log(output);
+    }
+
+    var params ={};
+    params.uri = 'storage:memoryCard1';
+    params.stIdx = 0;
+    params.cnt = 10;
+    params.type = null;
+    params.view = 'flat';
+    params.sort = '';
+
+    self.call('getMethodTypes', ["1.0"], processResult, '/sony/avContent');
+    //self.call('getContentList', [params], processResult, '/sony/avContent');
+  };
+
+
+  //---------------------------------------------------------------------------
+  //Methods that return the status of the camera
+
+  //Returns if the camera is connected
+  SonyCamera.prototype.isConnected = function () {
+    return this.connected;
+  };
+
+  //Returns the cameraFunction, ("Remote Shooting" or "Remote Shooting")
+  SonyCamera.prototype.getCameraFunciton = function () {
+    return this.params.cameraFunction.current;
   };
 
   // Client-side export

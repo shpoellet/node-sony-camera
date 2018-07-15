@@ -78,6 +78,18 @@
           console.log("sending stop command");
           socket.emit("stop");
         });
+        $('#shootMode').click(function(){
+          console.log("switching to Shooting mode");
+          socket.emit("shootMode");
+        });
+        $('#transferMode').click(function(){
+          console.log("switching to Transfer Mode");
+          socket.emit("transferMode");
+        });
+        $('#getURL').click(function(){
+          console.log("getting URL");
+          socket.emit("getURL");
+        });
         $('#startViewfinder').click(function(){
           console.log("sending startViewfinder command");
           socket.emit("startViewfinder");
@@ -95,6 +107,9 @@
       <button id="capture">Capture</button>
       <button id="start">start</button>
       <button id="stop">stop</button>
+      <button id="shootMode">Shooting Mode</button>
+      <button id="transferMode">Transfer Mode</button>
+      <button id="getURL">Get URL</button>
       <button id="startViewfinder">Liveview On</button>
       <button id="stopViewfinder">Liveview Off</button>
     </div>

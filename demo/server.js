@@ -40,6 +40,18 @@ io.on('connection', function(socket){
   	console.log("stopping recording");
   	cam.recordStop();
   });
+	socket.on('shootMode', function(){
+  	console.log("setting shoot mode");
+  	cam.setShootingMode();
+  });
+	socket.on('transferMode', function(){
+  	console.log("setting transferMode");
+  	cam.setTransferMode();
+  });
+	socket.on('getURL', function(){
+  	console.log("getting URL");
+  	cam.getURL();
+  });
   socket.on('startViewfinder', function(){
   	console.log("starting liveview");
   	cam.startViewfinder();
