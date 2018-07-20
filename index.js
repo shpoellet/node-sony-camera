@@ -9,6 +9,15 @@ var EventEmitter = require('events').EventEmitter;
 
 var minVersionRequired = '2.1.4';
 
+
+
+function downloadFile(path){
+  var file = fs.createWriteStream("file.MP4");
+  var request = http.get(path, function(response) {response.pipe(file);});
+}
+
+
+
 (function () {
 
   var SonyCamera = function (url, port, path) {
@@ -37,10 +46,11 @@ var minVersionRequired = '2.1.4';
     console.log(this.url + ':' + this.port + this.path);
   };
 
-  SonyCamera.prototype.call = function (method, params, callback, altPath) {
+  SonyCamera.prototype.call = function (method, params, callback, altPath, altVersion) {
     var self = this;
     this.rpcReq.method = method;
     this.rpcReq.params = params || [];
+    this.rpcReq.version = altVersion || '1.0';
     var postData = JSON.stringify(this.rpcReq);
 
     var timeoutHandle = null;
@@ -517,12 +527,12 @@ var minVersionRequired = '2.1.4';
   SonyCamera.prototype.getURL = function (callback) {
     var self = this;
 
-    // if(this.status != "ContentsTransfer") {
-    //   console.log("SonyWifi: camera not ready.  Status:", this.status);
-    //   return callback && callback('camera not ready');
-    // }
+    if(this.status != "ContentsTransfer") {
+      console.log("SonyWifi: camera not ready.  Status:", this.status);
+      return callback && callback('camera not ready');
+    }
 
-    // this.ready = false;
+    this.ready = false;
 
     var processResult = function(err, output) {
       if (err) {
@@ -530,19 +540,24 @@ var minVersionRequired = '2.1.4';
 
         return true;
       }
-      console.log(output);
+      console.log(output[0][0].content.original[0].url);
+      downloadFile(output[0][0].content.original[0].url);
     }
 
     var params ={};
     params.uri = 'storage:memoryCard1';
     params.stIdx = 0;
-    params.cnt = 10;
-    params.type = null;
+    params.cnt = 1;
+    // params.type = null;
     params.view = 'flat';
-    params.sort = '';
+    params.sort = 'descending';
 
-    self.call('getMethodTypes', ["1.0"], processResult, '/sony/avContent');
-    //self.call('getContentList', [params], processResult, '/sony/avContent');
+    // self.call('getMethodTypes', ["1.0"], processResult, '/sony/avContent', '1.3');
+    self.call('getContentList', [params], processResult, '/sony/avContent', '1.3');
+    // self.call('getSchemeList', null, processResult, '/sony/avContent');
+    // self.call('getSourceList', [{"scheme":"storage"}], processResult, '/sony/avContent');
+    // self.call('getContentCount', [{"uri": "storage:memoryCard1", "target": "all", "view": "flat"}], processResult, '/sony/avContent', '1.2');
+    // downloadFile();
   };
 
 
