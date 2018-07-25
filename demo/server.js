@@ -50,7 +50,8 @@ io.on('connection', function(socket){
   });
 	socket.on('getURL', function(){
   	console.log("getting URL");
-  	cam.getURL();
+  	if(cam.getURL()){console.log(true);}
+
   });
   socket.on('startViewfinder', function(){
   	console.log("starting liveview");

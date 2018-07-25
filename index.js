@@ -36,7 +36,7 @@ function downloadFile(path){
     this.recording = false;
 
     this.connected = false;
-    this.ready = false;
+    // this.ready = false;
     this.availableApiList = [];
   };
 
@@ -156,7 +156,7 @@ function downloadFile(path){
               console.log("SonyWifi: disconnected, trying to reconnect");
               setTimeout(function(){self.connect(); }, 2500);
             }
-            if(self.status == "IDLE") self.ready = true; else self.ready = false;
+            // if(self.status == "IDLE") self.ready = true; else self.ready = false;
             if(self.status != item.cameraStatus) {
               self.emit('status', item.cameraStatus);
               console.log("SonyWifi: status", self.status);
@@ -337,7 +337,7 @@ function downloadFile(path){
       return callback && callback('camera not ready');
     }
 
-    this.ready = false;
+    // this.ready = false;
 
     var processCaptureResult = function(err, output) {
       if (err) {
@@ -434,7 +434,7 @@ function downloadFile(path){
       return callback && callback('camera not ready');
     }
 
-    this.ready = false;
+    // this.ready = false;
 
     var processResult = function(err, output) {
       if (err) {
@@ -460,7 +460,7 @@ function downloadFile(path){
       return callback && callback('camera not recording');
     }
 
-    this.ready = false;
+    // this.ready = false;
 
     var processResult = function(err, output) {
       if (err) {
@@ -532,7 +532,7 @@ function downloadFile(path){
       return callback && callback('camera not ready');
     }
 
-    this.ready = false;
+    // this.ready = false;
 
     var processResult = function(err, output) {
       if (err) {
